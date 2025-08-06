@@ -136,6 +136,7 @@ const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove, onToggleAc
             onEdit={onEdit}
             onToggleAccommodation={onToggleAccommodation}
             isMobileView={true}
+            isSharedLink={isSharedLink}
           />
         </div>
 

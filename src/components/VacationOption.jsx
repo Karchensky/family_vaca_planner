@@ -258,22 +258,31 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
            <div className="detail-content">
              <div className="detail-label">Things To See Nearby</div>
             <div className="activities-grid">
-              {vacation.activities?.map((activity) => (
-                <div key={activity.id} className="activity-card">
-                  <img 
-                    src={activity.image} 
-                    alt={activity.name}
-                    className="activity-thumbnail"
-                    onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                    }}
-                  />
-                  <div className="activity-info">
-                    <div className="activity-name">{activity.name}</div>
-                    <div className="activity-description">{activity.description}</div>
+              {vacation.activities?.map((activity) => {
+                const handleActivityClick = () => {
+                  const selectedAccommodation = vacation.accommodations.find(acc => acc.selected) || vacation.accommodations[0]
+                  const searchQuery = `${activity.name} + 'things to do' + 'distance from' + ${selectedAccommodation.name} 'by train'`
+                  const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`
+                  window.open(googleSearchUrl, '_blank')
+                }
+                
+                return (
+                  <div key={activity.id} className="activity-card" onClick={handleActivityClick}>
+                    <img 
+                      src={activity.image} 
+                      alt={activity.name}
+                      className="activity-thumbnail"
+                      onError={(e) => {
+                        e.target.src = 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                      }}
+                    />
+                    <div className="activity-info">
+                      <div className="activity-name">{activity.name}</div>
+                      <div className="activity-description">{activity.description}</div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>
