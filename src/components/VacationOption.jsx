@@ -27,7 +27,7 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
     if (!vacation.accommodations.length) return null
 
     const flightCost = extractNumber(vacation.flightPrice)
-    const peopleCounts = [5, 6, 8, 9]
+    const peopleCounts = [5, 6, 7, 8]
     
     const grid = vacation.accommodations.map(accommodation => {
       const accommodationCost = extractNumber(accommodation.price) * 10 // Assuming 10 nights
@@ -201,13 +201,13 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
               <div className="detail-label">Estimated Cost Per Person</div>
               <div className="cost-grid-container">
                 <div className="cost-grid">
-                  <div className="grid-header">
-                    <div className="header-cell">Accommodation</div>
-                    <div className="header-cell">5 people</div>
-                    <div className="header-cell">6 people</div>
-                    <div className="header-cell">8 people</div>
-                    <div className="header-cell">9 people</div>
-                  </div>
+                                     <div className="grid-header">
+                     <div className="header-cell">Accommodation</div>
+                     <div className="header-cell">5 people</div>
+                     <div className="header-cell">6 people</div>
+                     <div className="header-cell">7 people</div>
+                     <div className="header-cell">8 people</div>
+                   </div>
                   {costGrid.grid.map((row) => (
                     <div key={row.accommodation.id} className="grid-row">
                       <div className="accommodation-cell">
@@ -253,10 +253,10 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
           </div>
         )}
 
-        <div className="detail-item">
-          <Mountain className="detail-icon" />
-          <div className="detail-content">
-            <div className="detail-label">Activities & Attractions</div>
+                 <div className="detail-item">
+           <Mountain className="detail-icon" />
+           <div className="detail-content">
+             <div className="detail-label">Things To See Nearby</div>
             <div className="activities-grid">
               {vacation.activities?.map((activity) => (
                 <div key={activity.id} className="activity-card">
