@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, X, Share2 } from 'lucide-react'
 import VacationOption from './VacationOption'
 import './MobileVacationViewer.css'
 
-const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove }) => {
+const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove, onToggleAccommodation }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [touchStart, setTouchStart] = useState(null)
   const [touchEnd, setTouchEnd] = useState(null)
@@ -132,6 +132,7 @@ const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove }) => {
             vacation={currentVacation}
             onRemove={onRemove}
             onEdit={onEdit}
+            onToggleAccommodation={onToggleAccommodation}
             isMobileView={true}
           />
         </div>

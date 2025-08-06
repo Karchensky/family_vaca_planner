@@ -3,24 +3,25 @@ import { X, Save, Plus, Trash2, ExternalLink, Calendar, Car, CloudRain } from 'l
 import './AddOptionModal.css'
 
 const AddOptionModal = ({ onAdd, onUpdate, onClose, editingVacation }) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    subtitle: '',
-    image: '',
-    location: '',
-    tripDates: '',
-    flightPrice: '',
-    otherCosts: [],
-    accommodations: [],
-    activities: [],
-    weather: {
-      day: '',
-      evening: '',
-      rainChance: '',
-      description: ''
-    },
-    notes: ''
-  })
+           const [formData, setFormData] = useState({
+           title: '',
+           subtitle: '',
+           image: '',
+           location: '',
+           tripDates: '',
+           flightPrice: '',
+           flightDuration: '',
+           flightNotes: '',
+           accommodations: [],
+           activities: [],
+           weather: {
+             day: '',
+             evening: '',
+             rainChance: '',
+             description: ''
+           },
+           notes: ''
+         })
 
   useEffect(() => {
     if (editingVacation) {
@@ -46,33 +47,7 @@ const AddOptionModal = ({ onAdd, onUpdate, onClose, editingVacation }) => {
     }))
   }
 
-  const addOtherCost = () => {
-    const newCost = {
-      id: Date.now(),
-      name: '',
-      cost: ''
-    }
-    setFormData(prev => ({
-      ...prev,
-      otherCosts: [...prev.otherCosts, newCost]
-    }))
-  }
 
-  const updateOtherCost = (index, field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      otherCosts: prev.otherCosts.map((cost, i) => 
-        i === index ? { ...cost, [field]: value } : cost
-      )
-    }))
-  }
-
-  const removeOtherCost = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      otherCosts: prev.otherCosts.filter((_, i) => i !== index)
-    }))
-  }
 
   const addAccommodation = () => {
     const newAccommodation = {
@@ -243,7 +218,7 @@ const AddOptionModal = ({ onAdd, onUpdate, onClose, editingVacation }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="flightPrice">Flight Price</label>
+              <label htmlFor="flightPrice">Estimated Flight Price (Economy)</label>
               <input
                 type="text"
                 id="flightPrice"
@@ -253,63 +228,35 @@ const AddOptionModal = ({ onAdd, onUpdate, onClose, editingVacation }) => {
                 placeholder="e.g., $1,200"
               />
             </div>
+            <div className="form-group">
+              <label htmlFor="flightDuration">Flight Duration</label>
+              <input
+                type="text"
+                id="flightDuration"
+                name="flightDuration"
+                value={formData.flightDuration}
+                onChange={handleChange}
+                placeholder="e.g., 18 hours"
+              />
+            </div>
           </div>
 
-          {/* Other Costs Section */}
-          <div className="form-section">
-            <div className="section-header">
-              <label>Other Cost Considerations</label>
-              <button 
-                type="button" 
-                className="btn-add" 
-                onClick={addOtherCost}
-              >
-                <Plus size={16} />
-                Add Cost
-              </button>
-            </div>
-            
-            {formData.otherCosts.map((cost, index) => (
-              <div key={cost.id} className="item-card">
-                <div className="item-header">
-                  <h4>Cost {index + 1}</h4>
-                  <button 
-                    type="button" 
-                    className="btn-remove" 
-                    onClick={() => removeOtherCost(index)}
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-                
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Name</label>
-                    <input
-                      type="text"
-                      value={cost.name}
-                      onChange={(e) => updateOtherCost(index, 'name', e.target.value)}
-                      placeholder="e.g., Car Rental"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Cost</label>
-                    <input
-                      type="text"
-                      value={cost.cost}
-                      onChange={(e) => updateOtherCost(index, 'cost', e.target.value)}
-                      placeholder="e.g., $300"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="form-group">
+            <label htmlFor="flightNotes">Flight Notes</label>
+            <input
+              type="text"
+              id="flightNotes"
+              name="flightNotes"
+              value={formData.flightNotes}
+              onChange={handleChange}
+              placeholder="e.g., 1 layover in Singapore, departure 10:30 PM"
+            />
           </div>
 
           {/* Accommodations Section */}
           <div className="form-section">
             <div className="section-header">
-              <label>Accommodations</label>
+              <label>Accommodation Ideas</label>
               <button 
                 type="button" 
                 className="btn-add" 

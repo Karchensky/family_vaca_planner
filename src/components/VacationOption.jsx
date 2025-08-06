@@ -1,16 +1,16 @@
 import React from 'react'
-import { 
-  MapPin, 
-  Plane, 
-  Home, 
-  Mountain, 
-  Sun, 
-  DollarSign, 
+import {
+  MapPin,
+  Plane,
+  Home,
+  Mountain,
+  Sun,
+  DollarSign,
   Trash2,
   Edit3,
   ExternalLink,
   Calendar,
-  Car,
+  Clock,
   FileText,
   CloudRain
 } from 'lucide-react'
@@ -27,16 +27,14 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
     const selectedAccommodation = vacation.accommodations.find(acc => acc.selected)
     if (!selectedAccommodation) return null
 
-    const flightCost = extractNumber(vacation.flightPrice)
-    const accommodationCost = extractNumber(selectedAccommodation.price) * 10 // Assuming 10 nights
-    const otherCostsTotal = vacation.otherCosts?.reduce((sum, cost) => sum + extractNumber(cost.cost), 0) || 0
-    const totalCost = flightCost + accommodationCost + otherCostsTotal
+             const flightCost = extractNumber(vacation.flightPrice)
+         const accommodationCost = extractNumber(selectedAccommodation.price) * 10 // Assuming 10 nights
+         const totalCost = flightCost + accommodationCost
 
     return {
-      flightCost,
-      accommodationCost,
-      otherCostsTotal,
-      totalCost,
+                 flightCost,
+           accommodationCost,
+           totalCost,
       breakdown: [5, 6, 7, 8].map(people => ({
         people,
         costPerPerson: Math.round(totalCost / people)
@@ -116,30 +114,26 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
         <div className="detail-item">
           <Plane className="detail-icon" />
           <div className="detail-content">
-            <div className="detail-label">Flight Price</div>
+            <div className="detail-label">Estimated Flight Price (Economy)</div>
             <div className="detail-value price">{vacation.flightPrice}</div>
-          </div>
-        </div>
-
-        <div className="detail-item">
-          <Car className="detail-icon" />
-          <div className="detail-content">
-            <div className="detail-label">Other Cost Considerations</div>
-            <div className="other-costs-list">
-              {vacation.otherCosts?.map((cost, index) => (
-                <div key={index} className="other-cost-item">
-                  <span className="cost-name">{cost.name}:</span>
-                  <span className="cost-amount">{cost.cost}</span>
+            {vacation.flightDuration && (
+              <div className="flight-details">
+                <div className="flight-duration">
+                  <Clock size={14} />
+                  {vacation.flightDuration}
                 </div>
-              ))}
-            </div>
+                {vacation.flightNotes && (
+                  <div className="flight-notes">{vacation.flightNotes}</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         <div className="detail-item">
           <Home className="detail-icon" />
           <div className="detail-content">
-            <div className="detail-label">Accommodations</div>
+            <div className="detail-label">Accommodation Ideas</div>
             <div className="accommodations-grid">
               {vacation.accommodations?.map((accommodation) => (
                 <div 
@@ -174,11 +168,16 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
                 </div>
               ))}
             </div>
-            
-            {/* Cost Breakdown */}
-            {costBreakdown && (
+          </div>
+        </div>
+
+        {/* Cost Breakdown - Separate Section */}
+        {costBreakdown && (
+          <div className="detail-item">
+            <DollarSign className="detail-icon" />
+            <div className="detail-content">
+              <div className="detail-label">Estimated Cost Per Person</div>
               <div className="cost-breakdown">
-                <h4>Estimated Cost Per Person</h4>
                 <div className="breakdown-grid">
                   {costBreakdown.breakdown.map(({ people, costPerPerson }) => (
                     <div key={people} className="breakdown-item">
@@ -190,13 +189,13 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
                 <div className="breakdown-details">
                   <div>Flight: ${costBreakdown.flightCost}</div>
                   <div>Accommodation (10 nights): ${costBreakdown.accommodationCost}</div>
-                  <div>Other costs: ${costBreakdown.otherCostsTotal}</div>
                   <div className="total-cost">Total: ${costBreakdown.totalCost}</div>
+                  <div className="cost-note">+ Other cost considerations (car rental, food, etc.)</div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="detail-item">
           <Mountain className="detail-icon" />

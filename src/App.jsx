@@ -27,6 +27,8 @@ const sampleVacations = [
     location: "Bali, Indonesia",
     tripDates: "June 15-25, 2024",
     flightPrice: "$1,200",
+    flightDuration: "18 hours",
+    flightNotes: "1 layover in Singapore, departure 10:30 PM",
     otherCosts: [
       { name: "Car Rental", cost: "$300" },
       { name: "Activities Package", cost: "$200" },
@@ -86,6 +88,8 @@ const sampleVacations = [
     location: "Zermatt, Switzerland",
     tripDates: "December 20-30, 2024",
     flightPrice: "$1,800",
+    flightDuration: "12 hours",
+    flightNotes: "Direct flight, departure 2:15 PM",
     otherCosts: [
       { name: "Ski Passes", cost: "$400" },
       { name: "Equipment Rental", cost: "$200" },
@@ -145,6 +149,8 @@ const sampleVacations = [
     location: "Santorini & Mykonos",
     tripDates: "September 10-20, 2024",
     flightPrice: "$1,500",
+    flightDuration: "15 hours",
+    flightNotes: "1 layover in London, departure 8:45 AM",
     otherCosts: [
       { name: "Ferry Passes", cost: "$120" },
       { name: "Island Tours", cost: "$180" },
@@ -203,6 +209,7 @@ function App() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingVacation, setEditingVacation] = useState(null)
   const [showMobileViewer, setShowMobileViewer] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   // Load saved vacations from localStorage on component mount
   useEffect(() => {
@@ -221,6 +228,21 @@ function App() {
       localStorage.setItem('vacationOptions', JSON.stringify(vacations))
     }
   }, [vacations])
+
+  // Detect mobile device and auto-show mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      setIsMobile(mobile)
+      if (mobile && vacations.length > 0) {
+        setShowMobileViewer(true)
+      }
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [vacations.length])
 
   const addVacation = (newVacation) => {
     const vacationWithId = {
@@ -358,14 +380,15 @@ function App() {
         />
       )}
 
-      {showMobileViewer && (
-        <MobileVacationViewer
-          vacations={vacations}
-          onClose={() => setShowMobileViewer(false)}
-          onEdit={editVacation}
-          onRemove={removeVacation}
-        />
-      )}
+                   {showMobileViewer && (
+               <MobileVacationViewer
+                 vacations={vacations}
+                 onClose={() => setShowMobileViewer(false)}
+                 onEdit={editVacation}
+                 onRemove={removeVacation}
+                 onToggleAccommodation={toggleAccommodationSelection}
+               />
+             )}
     </div>
   )
 }
