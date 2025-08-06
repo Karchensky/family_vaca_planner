@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, X, Share2 } from 'lucide-react'
 import VacationOption from './VacationOption'
 import './MobileVacationViewer.css'
 
-const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove, onToggleAccommodation }) => {
+const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove, onToggleAccommodation, isSharedLink = false }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [touchStart, setTouchStart] = useState(null)
   const [touchEnd, setTouchEnd] = useState(null)
@@ -75,7 +75,7 @@ const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove, onToggleAc
         goToPrevious()
       } else if (e.key === 'ArrowRight') {
         goToNext()
-      } else if (e.key === 'Escape') {
+      } else if (e.key === 'Escape' && !isSharedLink) {
         onClose()
       }
     }
@@ -99,9 +99,11 @@ const MobileVacationViewer = ({ vacations, onClose, onEdit, onRemove, onToggleAc
       >
         {/* Header */}
         <div className="mobile-viewer-header">
-          <button className="mobile-viewer-close" onClick={onClose}>
-            <X size={24} />
-          </button>
+          {!isSharedLink && (
+            <button className="mobile-viewer-close" onClick={onClose}>
+              <X size={24} />
+            </button>
+          )}
           <div className="mobile-viewer-title">
             {currentVacation.title}
           </div>
