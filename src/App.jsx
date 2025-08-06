@@ -202,8 +202,8 @@ function App() {
     if (savedVacations) {
       setVacations(JSON.parse(savedVacations))
     } else {
-      // If no saved data, use sample data for first-time users
-      setVacations(sampleVacations)
+      // If no saved data, use default data (either saved default or sample)
+      setVacations(loadDefaultData())
     }
   }, [])
 
@@ -288,6 +288,22 @@ function App() {
     }
   }
 
+  const saveAsDefault = () => {
+    if (window.confirm('Save current vacation options as the new default? This will replace the sample data for all users.')) {
+      // Save to localStorage as the new default
+      localStorage.setItem('defaultVacationOptions', JSON.stringify(vacations))
+      alert('Your vacation options have been saved as the new default!')
+    }
+  }
+
+  const loadDefaultData = () => {
+    const savedDefault = localStorage.getItem('defaultVacationOptions')
+    if (savedDefault) {
+      return JSON.parse(savedDefault)
+    }
+    return sampleVacations
+  }
+
   return (
     <div className="container">
       <header className="header">
@@ -312,22 +328,29 @@ function App() {
                   Mobile View
                 </button>
               )}
-              <div className="data-controls">
-                <button
-                  className="btn btn-secondary"
-                  onClick={resetToSampleData}
-                  title="Reset to sample vacation options"
-                >
-                  Reset to Samples
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={clearAllData}
-                  title="Clear all vacation options"
-                >
-                  Clear All
-                </button>
-              </div>
+                             <div className="data-controls">
+                 <button
+                   className="btn btn-secondary"
+                   onClick={saveAsDefault}
+                   title="Save current options as new default"
+                 >
+                   Save as Default
+                 </button>
+                 <button
+                   className="btn btn-secondary"
+                   onClick={resetToSampleData}
+                   title="Reset to sample vacation options"
+                 >
+                   Reset to Samples
+                 </button>
+                 <button
+                   className="btn btn-danger"
+                   onClick={clearAllData}
+                   title="Clear all vacation options"
+                 >
+                   Clear All
+                 </button>
+               </div>
             </div>
 
       {vacations.length === 0 ? (

@@ -49,8 +49,14 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
 
   const costGrid = calculateCostGrid()
 
-  const handleCellClick = (accommodationId) => {
+  const handleCellClick = (accommodationId, peopleCount) => {
+    // Update the accommodation selection
     onToggleAccommodation(vacation.id, accommodationId)
+  }
+
+  // Check if a specific cell is selected
+  const isCellSelected = (accommodationId) => {
+    return vacation.accommodations.find(acc => acc.id === accommodationId)?.selected || false
   }
 
   return (
@@ -139,7 +145,49 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
           </div>
         </div>
 
-        {/* Cost Grid */}
+        {/* Accommodation Ideas - Separate Section */}
+        <div className="detail-item">
+          <Home className="detail-icon" />
+          <div className="detail-content">
+            <div className="detail-label">Accommodation Ideas</div>
+            <div className="accommodations-grid">
+              {vacation.accommodations?.map((accommodation) => (
+                <div 
+                  key={accommodation.id} 
+                  className={`accommodation-card ${accommodation.selected ? 'selected' : ''}`}
+                  onClick={() => onToggleAccommodation(vacation.id, accommodation.id)}
+                >
+                  <img 
+                    src={accommodation.image} 
+                    alt={accommodation.name}
+                    className="accommodation-thumbnail"
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                    }}
+                  />
+                  <div className="accommodation-info">
+                    <div className="accommodation-name">{accommodation.name}</div>
+                    <div className="accommodation-price">{accommodation.price}</div>
+                    {accommodation.url && (
+                      <a 
+                        href={accommodation.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="accommodation-link"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ExternalLink size={12} />
+                        View Details
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Cost Grid - Separate Section */}
         {costGrid && (
           <div className="detail-item">
             <DollarSign className="detail-icon" />
@@ -163,8 +211,8 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
                       {row.costs.map((cost) => (
                         <div 
                           key={cost.people}
-                          className={`cost-cell ${row.accommodation.selected ? 'selected' : ''}`}
-                          onClick={() => handleCellClick(row.accommodation.id)}
+                          className={`cost-cell ${isCellSelected(row.accommodation.id) ? 'selected' : ''}`}
+                          onClick={() => handleCellClick(row.accommodation.id, cost.people)}
                         >
                           ${cost.costPerPerson}
                         </div>
