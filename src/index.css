@@ -591,3 +591,176 @@ body {
     justify-content: center;
   }
 } 
+
+/* Cost Grid Styles */
+.cost-grid-container {
+  margin-top: 12px;
+}
+
+.cost-grid {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-cell {
+  padding: 12px 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #4a5568;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-cell:first-child {
+  text-align: left;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-cell:last-child {
+  border-right: none;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grid-row:last-child {
+  border-bottom: none;
+}
+
+.accommodation-cell {
+  padding: 12px 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.accommodation-name {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.accommodation-price {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.cost-cell {
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #2d3748;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cost-cell:last-child {
+  border-right: none;
+}
+
+.cost-cell:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.cost-cell.selected {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Cost Summary */
+.cost-summary {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.summary-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.summary-label {
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.875rem;
+}
+
+.summary-value {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.875rem;
+}
+
+.summary-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 12px 0;
+}
+
+.summary-row.total {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.summary-row.total .summary-label,
+.summary-row.total .summary-value {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #667eea;
+}
+
+/* Responsive adjustments for cost grid */
+@media (max-width: 768px) {
+  .cost-grid {
+    font-size: 0.75rem;
+  }
+  
+  .header-cell,
+  .accommodation-cell,
+  .cost-cell {
+    padding: 8px 4px;
+  }
+  
+  .accommodation-name {
+    font-size: 0.75rem;
+  }
+  
+  .accommodation-price {
+    font-size: 0.7rem;
+  }
+  
+  .cost-summary {
+    padding: 12px;
+  }
+  
+  .summary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+} 

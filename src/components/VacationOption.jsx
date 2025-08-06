@@ -22,26 +22,36 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
     return match ? parseFloat(match[1].replace(/,/g, '')) : 0
   }
 
-  // Calculate cost breakdown - always show, default to first accommodation if none selected
-  const calculateCostBreakdown = () => {
-    const selectedAccommodation = vacation.accommodations.find(acc => acc.selected) || vacation.accommodations[0]
-    if (!selectedAccommodation || !vacation.accommodations.length) return null
+  // Calculate cost breakdown for grid display
+  const calculateCostGrid = () => {
+    if (!vacation.accommodations.length) return null
 
     const flightCost = extractNumber(vacation.flightPrice)
-    const accommodationCost = extractNumber(selectedAccommodation.price) * 10 // Assuming 10 nights
+    const peopleCounts = [5, 6, 8, 9]
     
+    const grid = vacation.accommodations.map(accommodation => {
+      const accommodationCost = extractNumber(accommodation.price) * 10 // Assuming 10 nights
+      return {
+        accommodation,
+        costs: peopleCounts.map(people => ({
+          people,
+          costPerPerson: Math.round((accommodationCost / people) + flightCost)
+        }))
+      }
+    })
+
     return {
       flightCost,
-      accommodationCost,
-      selectedAccommodation,
-      breakdown: [5, 6, 8, 9].map(people => ({
-        people,
-        costPerPerson: Math.round((accommodationCost / people) + flightCost)
-      }))
+      grid,
+      selectedAccommodation: vacation.accommodations.find(acc => acc.selected) || vacation.accommodations[0]
     }
   }
 
-  const costBreakdown = calculateCostBreakdown()
+  const costGrid = calculateCostGrid()
+
+  const handleCellClick = (accommodationId) => {
+    onToggleAccommodation(vacation.id, accommodationId)
+  }
 
   return (
     <div className="option-card">
@@ -111,47 +121,6 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
         </div>
 
         <div className="detail-item">
-          <Home className="detail-icon" />
-          <div className="detail-content">
-            <div className="detail-label">Accommodation Ideas</div>
-            <div className="accommodations-grid">
-              {vacation.accommodations?.map((accommodation) => (
-                <div 
-                  key={accommodation.id} 
-                  className={`accommodation-card ${accommodation.selected ? 'selected' : ''}`}
-                  onClick={() => onToggleAccommodation(vacation.id, accommodation.id)}
-                >
-                  <img 
-                    src={accommodation.image} 
-                    alt={accommodation.name}
-                    className="accommodation-thumbnail"
-                    onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                    }}
-                  />
-                  <div className="accommodation-info">
-                    <div className="accommodation-name">{accommodation.name}</div>
-                    <div className="accommodation-price">{accommodation.price}</div>
-                    {accommodation.url && (
-                      <a 
-                        href={accommodation.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="accommodation-link"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ExternalLink size={12} />
-                        View Details
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="detail-item">
           <Plane className="detail-icon" />
           <div className="detail-content">
             <div className="detail-label">Estimated Flight Price (Economy)</div>
@@ -170,25 +139,60 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
           </div>
         </div>
 
-        {/* Cost Breakdown - Always Display */}
-        {costBreakdown && (
+        {/* Cost Grid */}
+        {costGrid && (
           <div className="detail-item">
             <DollarSign className="detail-icon" />
             <div className="detail-content">
               <div className="detail-label">Estimated Cost Per Person</div>
-              <div className="cost-breakdown">
-                <div className="breakdown-grid">
-                  {costBreakdown.breakdown.map(({ people, costPerPerson }) => (
-                    <div key={people} className="breakdown-item">
-                      <span className="people-count">{people} people:</span>
-                      <span className="per-person-cost">${costPerPerson}/person</span>
+              <div className="cost-grid-container">
+                <div className="cost-grid">
+                  <div className="grid-header">
+                    <div className="header-cell">Accommodation</div>
+                    <div className="header-cell">5 people</div>
+                    <div className="header-cell">6 people</div>
+                    <div className="header-cell">8 people</div>
+                    <div className="header-cell">9 people</div>
+                  </div>
+                  {costGrid.grid.map((row) => (
+                    <div key={row.accommodation.id} className="grid-row">
+                      <div className="accommodation-cell">
+                        <div className="accommodation-name">{row.accommodation.name}</div>
+                        <div className="accommodation-price">{row.accommodation.price}/night</div>
+                      </div>
+                      {row.costs.map((cost) => (
+                        <div 
+                          key={cost.people}
+                          className={`cost-cell ${row.accommodation.selected ? 'selected' : ''}`}
+                          onClick={() => handleCellClick(row.accommodation.id)}
+                        >
+                          ${cost.costPerPerson}
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>
-                <div className="breakdown-details">
-                  <div>Flight: ${costBreakdown.flightCost} (per person)</div>
-                  <div>Accommodation (10 nights): ${costBreakdown.accommodationCost}</div>
-                  <div className="cost-note">+ Other cost considerations (car rental, food, etc.)</div>
+                
+                {/* Cost Summary */}
+                <div className="cost-summary">
+                  <div className="summary-row">
+                    <span className="summary-label">Flight:</span>
+                    <span className="summary-value">${costGrid.flightCost} per person</span>
+                  </div>
+                  <div className="summary-row">
+                    <span className="summary-label">Accommodation:</span>
+                    <span className="summary-value">
+                      ${Math.round((extractNumber(costGrid.selectedAccommodation.price) * 10) / 6)} per person (6 people)
+                    </span>
+                  </div>
+                  <div className="summary-divider"></div>
+                  <div className="summary-row total">
+                    <span className="summary-label">Net Total:</span>
+                    <span className="summary-value">
+                      ${Math.round((extractNumber(costGrid.selectedAccommodation.price) * 10) / 6) + costGrid.flightCost} per person
+                    </span>
+                  </div>
+                  <div className="cost-note">+ Other cost considerations (rental car, food, personal expenses, etc.)</div>
                 </div>
               </div>
             </div>
