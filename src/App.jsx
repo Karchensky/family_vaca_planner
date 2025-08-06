@@ -229,6 +229,14 @@ function App() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [vacations.length])
 
+  // Check if this is a shared link (no editing capabilities)
+  const isSharedLink = () => {
+    // If there's saved default data and no user-specific data, treat as shared link
+    const hasDefaultData = localStorage.getItem('defaultVacationOptions')
+    const hasUserData = localStorage.getItem('vacationOptions')
+    return hasDefaultData && !hasUserData
+  }
+
   const addVacation = (newVacation) => {
     const vacationWithId = {
       ...newVacation,
@@ -311,47 +319,49 @@ function App() {
         <p>Compare your travel options and find the perfect destination</p>
       </header>
 
-                  <div className="controls">
-              <button
-                className="btn btn-primary"
-                onClick={() => setShowAddModal(true)}
-              >
-                <Plus size={18} />
-                Add New Option
-              </button>
-              {vacations.length > 0 && (
-                <button
-                  className="btn"
-                  onClick={() => setShowMobileViewer(true)}
-                >
-                  <Smartphone size={18} />
-                  Mobile View
-                </button>
-              )}
-                             <div className="data-controls">
-                 <button
-                   className="btn btn-secondary"
-                   onClick={saveAsDefault}
-                   title="Save current options as new default"
-                 >
-                   Save as Default
-                 </button>
-                 <button
-                   className="btn btn-secondary"
-                   onClick={resetToSampleData}
-                   title="Reset to sample vacation options"
-                 >
-                   Reset to Samples
-                 </button>
-                 <button
-                   className="btn btn-danger"
-                   onClick={clearAllData}
-                   title="Clear all vacation options"
-                 >
-                   Clear All
-                 </button>
-               </div>
-            </div>
+                                 {!isSharedLink() && (
+                 <div className="controls">
+                   <button
+                     className="btn btn-primary"
+                     onClick={() => setShowAddModal(true)}
+                   >
+                     <Plus size={18} />
+                     Add New Option
+                   </button>
+                   {vacations.length > 0 && (
+                     <button
+                       className="btn"
+                       onClick={() => setShowMobileViewer(true)}
+                     >
+                       <Smartphone size={18} />
+                       Mobile View
+                     </button>
+                   )}
+                   <div className="data-controls">
+                     <button
+                       className="btn btn-secondary"
+                       onClick={saveAsDefault}
+                       title="Save current options as new default"
+                     >
+                       Save as Default
+                     </button>
+                     <button
+                       className="btn btn-secondary"
+                       onClick={resetToSampleData}
+                       title="Reset to sample vacation options"
+                     >
+                       Reset to Samples
+                     </button>
+                     <button
+                       className="btn btn-danger"
+                       onClick={clearAllData}
+                       title="Clear all vacation options"
+                     >
+                       Clear All
+                     </button>
+                   </div>
+                 </div>
+               )}
 
       {vacations.length === 0 ? (
         <div className="empty-state">
@@ -367,15 +377,16 @@ function App() {
         </div>
       ) : (
         <div className="comparison-grid">
-          {vacations.map((vacation) => (
-            <VacationOption
-              key={vacation.id}
-              vacation={vacation}
-              onRemove={removeVacation}
-              onEdit={editVacation}
-              onToggleAccommodation={toggleAccommodationSelection}
-            />
-          ))}
+                     {vacations.map((vacation) => (
+             <VacationOption
+               key={vacation.id}
+               vacation={vacation}
+               onRemove={isSharedLink() ? null : removeVacation}
+               onEdit={isSharedLink() ? null : editVacation}
+               onToggleAccommodation={toggleAccommodationSelection}
+               isSharedLink={isSharedLink()}
+             />
+           ))}
         </div>
       )}
 

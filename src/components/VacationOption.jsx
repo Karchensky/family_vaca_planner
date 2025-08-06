@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   MapPin,
   Plane,
@@ -15,7 +15,7 @@ import {
   CloudRain
 } from 'lucide-react'
 
-const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isMobileView = false }) => {
+const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isMobileView = false, isSharedLink = false }) => {
   // Helper function to extract numeric values from price strings
   const extractNumber = (priceString) => {
     const match = priceString.match(/\$?([\d,]+)/)
@@ -49,14 +49,20 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
 
   const costGrid = calculateCostGrid()
 
+  // Track selected accommodation and people count
+  const [selectedPeople, setSelectedPeople] = useState(6) // Default to 6 people
+
   const handleCellClick = (accommodationId, peopleCount) => {
     // Update the accommodation selection
     onToggleAccommodation(vacation.id, accommodationId)
+    // Update the selected people count
+    setSelectedPeople(peopleCount)
   }
 
   // Check if a specific cell is selected
-  const isCellSelected = (accommodationId) => {
-    return vacation.accommodations.find(acc => acc.id === accommodationId)?.selected || false
+  const isCellSelected = (accommodationId, peopleCount) => {
+    const isAccommodationSelected = vacation.accommodations.find(acc => acc.id === accommodationId)?.selected || false
+    return isAccommodationSelected && selectedPeople === peopleCount
   }
 
   return (
@@ -67,7 +73,7 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
             <h3 className="option-title">{vacation.title}</h3>
             <p className="option-subtitle">{vacation.subtitle}</p>
           </div>
-          {!isMobileView && (
+          {!isMobileView && !isSharedLink && onEdit && onRemove && (
             <div style={{ display: 'flex', gap: '8px' }}>
               <button 
                 onClick={() => onEdit(vacation)}
@@ -211,7 +217,7 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
                       {row.costs.map((cost) => (
                         <div 
                           key={cost.people}
-                          className={`cost-cell ${isCellSelected(row.accommodation.id) ? 'selected' : ''}`}
+                          className={`cost-cell ${isCellSelected(row.accommodation.id, cost.people) ? 'selected' : ''}`}
                           onClick={() => handleCellClick(row.accommodation.id, cost.people)}
                         >
                           ${cost.costPerPerson}
@@ -221,27 +227,27 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
                   ))}
                 </div>
                 
-                {/* Cost Summary */}
-                <div className="cost-summary">
-                  <div className="summary-row">
-                    <span className="summary-label">Flight:</span>
-                    <span className="summary-value">${costGrid.flightCost} per person</span>
-                  </div>
-                  <div className="summary-row">
-                    <span className="summary-label">Accommodation:</span>
-                    <span className="summary-value">
-                      ${Math.round((extractNumber(costGrid.selectedAccommodation.price) * 10) / 6)} per person (6 people)
-                    </span>
-                  </div>
-                  <div className="summary-divider"></div>
-                  <div className="summary-row total">
-                    <span className="summary-label">Net Total:</span>
-                    <span className="summary-value">
-                      ${Math.round((extractNumber(costGrid.selectedAccommodation.price) * 10) / 6) + costGrid.flightCost} per person
-                    </span>
-                  </div>
-                  <div className="cost-note">+ Other cost considerations (rental car, food, personal expenses, etc.)</div>
-                </div>
+                                 {/* Cost Summary */}
+                 <div className="cost-summary">
+                   <div className="summary-row">
+                     <span className="summary-label">Flight:</span>
+                     <span className="summary-value">${costGrid.flightCost} per person</span>
+                   </div>
+                   <div className="summary-row">
+                     <span className="summary-label">Accommodation:</span>
+                     <span className="summary-value">
+                       ${Math.round((extractNumber(costGrid.selectedAccommodation.price) * 10) / selectedPeople)} per person ({selectedPeople} people)
+                     </span>
+                   </div>
+                   <div className="summary-divider"></div>
+                   <div className="summary-row total">
+                     <span className="summary-label">Net Total:</span>
+                     <span className="summary-value">
+                       ${Math.round((extractNumber(costGrid.selectedAccommodation.price) * 10) / selectedPeople) + costGrid.flightCost} per person
+                     </span>
+                   </div>
+                   <div className="cost-note">+ Other cost considerations (rental car, food, personal expenses, etc.)</div>
+                 </div>
               </div>
             </div>
           </div>
