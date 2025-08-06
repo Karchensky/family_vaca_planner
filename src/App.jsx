@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
   MapPin, 
   Plane, 
@@ -199,10 +199,28 @@ const sampleVacations = [
 ]
 
 function App() {
-  const [vacations, setVacations] = useState(sampleVacations)
+  const [vacations, setVacations] = useState([])
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingVacation, setEditingVacation] = useState(null)
   const [showMobileViewer, setShowMobileViewer] = useState(false)
+
+  // Load saved vacations from localStorage on component mount
+  useEffect(() => {
+    const savedVacations = localStorage.getItem('vacationOptions')
+    if (savedVacations) {
+      setVacations(JSON.parse(savedVacations))
+    } else {
+      // If no saved data, use sample data for first-time users
+      setVacations(sampleVacations)
+    }
+  }, [])
+
+  // Save vacations to localStorage whenever they change
+  useEffect(() => {
+    if (vacations.length > 0) {
+      localStorage.setItem('vacationOptions', JSON.stringify(vacations))
+    }
+  }, [vacations])
 
   const addVacation = (newVacation) => {
     const vacationWithId = {
@@ -250,6 +268,19 @@ function App() {
     setEditingVacation(null)
   }
 
+  const clearAllData = () => {
+    if (window.confirm('Are you sure you want to clear all vacation options? This cannot be undone.')) {
+      setVacations([])
+      localStorage.removeItem('vacationOptions')
+    }
+  }
+
+  const resetToSampleData = () => {
+    if (window.confirm('Reset to sample vacation options? This will replace your current data.')) {
+      setVacations(sampleVacations)
+    }
+  }
+
   return (
     <div className="container">
       <header className="header">
@@ -257,24 +288,40 @@ function App() {
         <p>Compare your travel options and find the perfect destination</p>
       </header>
 
-      <div className="controls">
-        <button 
-          className="btn btn-primary" 
-          onClick={() => setShowAddModal(true)}
-        >
-          <Plus size={18} />
-          Add New Option
-        </button>
-        {vacations.length > 0 && (
-          <button 
-            className="btn" 
-            onClick={() => setShowMobileViewer(true)}
-          >
-            <Smartphone size={18} />
-            Mobile View
-          </button>
-        )}
-      </div>
+                  <div className="controls">
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowAddModal(true)}
+              >
+                <Plus size={18} />
+                Add New Option
+              </button>
+              {vacations.length > 0 && (
+                <button
+                  className="btn"
+                  onClick={() => setShowMobileViewer(true)}
+                >
+                  <Smartphone size={18} />
+                  Mobile View
+                </button>
+              )}
+              <div className="data-controls">
+                <button
+                  className="btn btn-secondary"
+                  onClick={resetToSampleData}
+                  title="Reset to sample vacation options"
+                >
+                  Reset to Samples
+                </button>
+                <button
+                  className="btn btn-danger"
+                  onClick={clearAllData}
+                  title="Clear all vacation options"
+                >
+                  Clear All
+                </button>
+              </div>
+            </div>
 
       {vacations.length === 0 ? (
         <div className="empty-state">
