@@ -29,11 +29,6 @@ const sampleVacations = [
     flightPrice: "$1,200",
     flightDuration: "18 hours",
     flightNotes: "1 layover in Singapore, departure 10:30 PM",
-    otherCosts: [
-      { name: "Car Rental", cost: "$300" },
-      { name: "Activities Package", cost: "$200" },
-      { name: "Airport Transfers", cost: "$80" }
-    ],
     accommodations: [
       {
         id: 1,
@@ -41,7 +36,7 @@ const sampleVacations = [
         image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
         price: "$150/night",
         url: "https://airbnb.com/example1",
-        selected: false
+        selected: true
       },
       {
         id: 2,
@@ -90,11 +85,6 @@ const sampleVacations = [
     flightPrice: "$1,800",
     flightDuration: "12 hours",
     flightNotes: "Direct flight, departure 2:15 PM",
-    otherCosts: [
-      { name: "Ski Passes", cost: "$400" },
-      { name: "Equipment Rental", cost: "$200" },
-      { name: "Mountain Transport", cost: "$150" }
-    ],
     accommodations: [
       {
         id: 1,
@@ -102,7 +92,7 @@ const sampleVacations = [
         image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
         price: "$300/night",
         url: "https://booking.com/example3",
-        selected: false
+        selected: true
       },
       {
         id: 2,
@@ -151,11 +141,6 @@ const sampleVacations = [
     flightPrice: "$1,500",
     flightDuration: "15 hours",
     flightNotes: "1 layover in London, departure 8:45 AM",
-    otherCosts: [
-      { name: "Ferry Passes", cost: "$120" },
-      { name: "Island Tours", cost: "$180" },
-      { name: "Beach Equipment", cost: "$60" }
-    ],
     accommodations: [
       {
         id: 1,
@@ -163,7 +148,7 @@ const sampleVacations = [
         image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
         price: "$400/night",
         url: "https://booking.com/example5",
-        selected: false
+        selected: true
       },
       {
         id: 2,

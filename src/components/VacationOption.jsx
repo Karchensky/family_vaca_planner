@@ -22,22 +22,21 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
     return match ? parseFloat(match[1].replace(/,/g, '')) : 0
   }
 
-  // Calculate cost breakdown for selected accommodation
+  // Calculate cost breakdown - always show, default to first accommodation if none selected
   const calculateCostBreakdown = () => {
-    const selectedAccommodation = vacation.accommodations.find(acc => acc.selected)
-    if (!selectedAccommodation) return null
+    const selectedAccommodation = vacation.accommodations.find(acc => acc.selected) || vacation.accommodations[0]
+    if (!selectedAccommodation || !vacation.accommodations.length) return null
 
-             const flightCost = extractNumber(vacation.flightPrice)
-         const accommodationCost = extractNumber(selectedAccommodation.price) * 10 // Assuming 10 nights
-         const totalCost = flightCost + accommodationCost
-
+    const flightCost = extractNumber(vacation.flightPrice)
+    const accommodationCost = extractNumber(selectedAccommodation.price) * 10 // Assuming 10 nights
+    
     return {
-                 flightCost,
-           accommodationCost,
-           totalCost,
-      breakdown: [5, 6, 7, 8].map(people => ({
+      flightCost,
+      accommodationCost,
+      selectedAccommodation,
+      breakdown: [5, 6, 8, 9].map(people => ({
         people,
-        costPerPerson: Math.round(totalCost / people)
+        costPerPerson: Math.round((accommodationCost / people) + flightCost)
       }))
     }
   }
@@ -112,25 +111,6 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
         </div>
 
         <div className="detail-item">
-          <Plane className="detail-icon" />
-          <div className="detail-content">
-            <div className="detail-label">Estimated Flight Price (Economy)</div>
-            <div className="detail-value price">{vacation.flightPrice}</div>
-            {vacation.flightDuration && (
-              <div className="flight-details">
-                <div className="flight-duration">
-                  <Clock size={14} />
-                  {vacation.flightDuration}
-                </div>
-                {vacation.flightNotes && (
-                  <div className="flight-notes">{vacation.flightNotes}</div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="detail-item">
           <Home className="detail-icon" />
           <div className="detail-content">
             <div className="detail-label">Accommodation Ideas</div>
@@ -171,7 +151,26 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
           </div>
         </div>
 
-        {/* Cost Breakdown - Separate Section */}
+        <div className="detail-item">
+          <Plane className="detail-icon" />
+          <div className="detail-content">
+            <div className="detail-label">Estimated Flight Price (Economy)</div>
+            <div className="detail-value price">{vacation.flightPrice}</div>
+            {vacation.flightDuration && (
+              <div className="flight-details">
+                <div className="flight-duration">
+                  <Clock size={14} />
+                  {vacation.flightDuration}
+                </div>
+                {vacation.flightNotes && (
+                  <div className="flight-notes">{vacation.flightNotes}</div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Cost Breakdown - Always Display */}
         {costBreakdown && (
           <div className="detail-item">
             <DollarSign className="detail-icon" />
@@ -187,9 +186,8 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
                   ))}
                 </div>
                 <div className="breakdown-details">
-                  <div>Flight: ${costBreakdown.flightCost}</div>
+                  <div>Flight: ${costBreakdown.flightCost} (per person)</div>
                   <div>Accommodation (10 nights): ${costBreakdown.accommodationCost}</div>
-                  <div className="total-cost">Total: ${costBreakdown.totalCost}</div>
                   <div className="cost-note">+ Other cost considerations (car rental, food, etc.)</div>
                 </div>
               </div>
