@@ -331,16 +331,37 @@ function App() {
 
   // Check if this is a shared link (no editing capabilities)
   const isSharedLink = () => {
-    // If there's saved default data and no user-specific data, treat as shared link
+    // Check for shared link parameter or if there's saved default data and no user-specific data
+    const urlParams = new URLSearchParams(window.location.search)
+    const isShared = urlParams.get('shared') === 'true'
     const hasDefaultData = localStorage.getItem('defaultVacationOptions')
     const hasUserData = localStorage.getItem('vacationOptions')
-    return hasDefaultData && !hasUserData
+    return isShared || (hasDefaultData && !hasUserData)
   }
 
-  // Force mobile view for shared links
+  // Force mobile view for shared links and prevent escape
   useEffect(() => {
     if (isSharedLink()) {
       setShowMobileViewer(true)
+      // Prevent back button and escape key from closing mobile view
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      }
+      const handlePopState = (e) => {
+        e.preventDefault()
+        window.history.pushState(null, '', window.location.href)
+      }
+      
+      document.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('popstate', handlePopState)
+      
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+        window.removeEventListener('popstate', handlePopState)
+      }
     }
   }, [])
 
@@ -411,6 +432,18 @@ function App() {
     }
   }
 
+  const generateSharedLink = () => {
+    // Save current data as default
+    localStorage.setItem('defaultVacationOptions', JSON.stringify(vacations))
+    
+    // Create shared URL
+    const sharedUrl = `${window.location.origin}${window.location.pathname}?shared=true`
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(sharedUrl)
+    alert('Shared link copied to clipboard! Share this URL with your family.')
+  }
+
   const loadDefaultData = () => {
     const savedDefault = localStorage.getItem('defaultVacationOptions')
     if (savedDefault) {
@@ -453,6 +486,13 @@ function App() {
                 title="Save current options as new default"
               >
                 Save as Default
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={generateSharedLink}
+                title="Generate a secure shared link for family viewing"
+              >
+                Generate Shared Link
               </button>
               <button
                 className="btn btn-secondary"
