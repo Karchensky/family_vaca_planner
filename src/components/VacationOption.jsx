@@ -261,7 +261,7 @@ const VacationOption = ({ vacation, onRemove, onEdit, onToggleAccommodation, isM
               {vacation.activities?.map((activity) => {
                 const handleActivityClick = () => {
                   const selectedAccommodation = vacation.accommodations.find(acc => acc.selected) || vacation.accommodations[0]
-                  const searchQuery = `${activity.name} things to do`
+                  const searchQuery = `${activity.name}`
                   const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`
                   window.open(googleSearchUrl, '_blank')
                 }
